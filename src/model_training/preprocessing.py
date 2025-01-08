@@ -1,5 +1,6 @@
 from typing import Dict
 
+import pandas
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.window import Window
 from pyspark.sql.types import (
@@ -9,6 +10,8 @@ from pyspark.sql import functions as F
 from pyspark.sql.functions import (
     col, min, max, expr, hour, when, from_json, explode, sum as spark_sum
 )
+import src.model_training.spark
+
 
 
 def load_data(data_paths: Dict[str, str],
@@ -307,6 +310,38 @@ def calculate_browsing_time(feature_df: DataFrame,
     enriched_feature_df = feature_df.join(browsing_time_df, on="session_id", how="inner")
     return enriched_feature_df
 
+import pandas as pd
+import reverse_geocode
+
+def add_city_features(feature_df: pd.DataFrame, lat_col: str, long_col: str) -> pd.DataFrame:
+    """
+    Adds a 'city' column to the DataFrame by reverse geocoding latitude and longitude.
+
+    Args:
+        feature_df (pd.DataFrame): DataFrame containing latitude and longitude columns.
+        lat_col (str): Column name for latitude.
+        long_col (str): Column name for longitude.
+
+    Returns:
+        pd.DataFrame: DataFrame with a new 'city' column added.
+    """
+    # Ensure lat/long columns exist
+    if lat_col not in feature_df.columns or long_col not in feature_df.columns:
+        raise ValueError(f"Columns '{lat_col}' and '{long_col}' must exist in the DataFrame.")
+
+    # Convert lat-long pairs into tuples
+    lat_long_tuples = list(zip(feature_df[lat_col], feature_df[long_col]))
+
+    # Perform reverse geocoding
+    cities = reverse_geocode.search(lat_long_tuples)
+
+    # Extract city names
+    feature_df["city"] = [location["city"] for location in cities]
+
+    return feature_df
+
+
+
 
 def preprocess_data(data_paths: Dict[str, str],
                     schemas: Dict[str, StructType],
@@ -350,6 +385,7 @@ def preprocess_data(data_paths: Dict[str, str],
 
     # Calculate browsing time and finalize
     processed_data = calculate_browsing_time(age_bins, browsing_behaviour, ['SCR', 'SER', 'HP'])
+
 
     print("Data preprocessing complete.")
     return processed_data
