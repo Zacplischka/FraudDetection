@@ -93,7 +93,7 @@ from pyspark.sql import SparkSession
 from pyspark import SparkConf
 
 # Path to the JDBC driver **inside the Docker container**:
-jdbc_driver_path = "/opt/jdbc/postgresql-42.7.4.jar"
+jdbc_driver_path = ".venv/lib/python3.11/site-packages/pyspark/jars/postgresql-42.7.4.jar"
 
 # PostgreSQL connection info:
 postgres_host = "database"  # Docker service name
@@ -108,7 +108,7 @@ db_properties = {
     "password": postgres_password,
     "driver": "org.postgresql.Driver"
 }
-jdbc_url = f"jdbc:postgresql://{postgres_host}:{postgres_port}/{postgres_db}"
+jdbc_url = "jdbc:postgresql://localhost:5432/fraud"
 
 # SparkConf with JAR in the classpath
 conf = (SparkConf()
@@ -148,7 +148,7 @@ model_path = "src/model_training/gb_model"
 
 if not os.path.exists(model_path):
     print(f"Model not found at {model_path}. Training a new model...")
-    subprocess.run(["python", "scripts/train_model.py"])
+    subprocess.run(["python", "src/model_training/train_model.py"])
 else:
     print("Model already exists. Skipping training...")
 
@@ -162,6 +162,7 @@ print("Making predictions...")
 predictions = model.transform(data)
 print("Predictions completed.")
 
+print('Generating city features for visualization...')
 # Convert to Pandas and add city features
 predictions_df = predictions.toPandas()
 df_with_city = preprocessing.add_city_features(predictions_df, "shipment_location_lat", "shipment_location_long")
