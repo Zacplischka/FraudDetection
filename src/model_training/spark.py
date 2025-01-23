@@ -30,7 +30,7 @@ def create_spark_session(app_name="MySparkApp",
         .setMaster(master) \
         .set("spark.executor.memory", executor_memory) \
         .set("spark.driver.memory", driver_memory) \
-        .set("spark.sql.shuffle.partitions", 4) \
+        .set("spark.sql.shuffle.partitions", 10) \
         .set("spark.jars", jdbc_driver_path)  # Add JDBC driver path
 
     # Initialize the Spark session

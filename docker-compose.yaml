@@ -1,3 +1,4 @@
+
 services:
   database:
     image: postgres
@@ -7,9 +8,11 @@ services:
     environment:
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: docker
-      POSTGRES_DB: exampledb
+      POSTGRES_DB: fraud
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data  # Persist database data
 
-  adminer: # Adminer is a database management tool that allows you to manage databases, tables, columns, relations, indexes, users, permissions, and more.
+  adminer:
     image: adminer
     restart: always
     depends_on:
@@ -17,4 +20,26 @@ services:
     ports:
       - "8080:8080"
 
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: streamlit-app
+    environment:
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_NAME=fraud
+      - DB_USER=docker
+      - DB_PASSWORD=docker
+      - POSTGRES_JDBC_JAR=/opt/jdbc/postgresql-42.7.4.jar  # Set JDBC path
+    volumes:
+      - ./:/app # Mount the local app directory to /app in the container
+    ports:
+      - "8501:8501"
+    depends_on:
+      - database
+
+
+volumes:
+  postgres_data:
 
