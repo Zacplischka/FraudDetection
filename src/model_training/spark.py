@@ -33,6 +33,10 @@ def create_spark_session(app_name="MySparkApp",
         .set("spark.sql.shuffle.partitions", 10) \
         .set("spark.jars", jdbc_driver_path)  # Add JDBC driver path
 
+        # set log level to ERROR
+
+
+
     # Initialize the Spark session
     spark = SparkSession.builder.config(conf=conf).getOrCreate()
 
@@ -41,7 +45,7 @@ def create_spark_session(app_name="MySparkApp",
         spark.conf.set("spark.sql.adaptive.enabled", "true")
 
     # Set log level for SparkContext
-    spark.sparkContext.setLogLevel(log_level)
+    spark.sparkContext.setLogLevel("ERROR")
 
     # Clear Spark catalog cache
     spark.catalog.clearCache()

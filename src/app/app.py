@@ -2,8 +2,7 @@ import streamlit as st
 import pandas as pd
 import psycopg2
 import pydeck as pdk
-
-import plots as pl  # Custom module (e.g., for plot_confusion_matrix)
+import plots as pl
 
 # ------------------------------------------------
 # 1. Database Connection and Data Fetch Functions
@@ -36,7 +35,6 @@ connect_to_db()
 # ---------------------------
 
 transactions = fetch_data("SELECT * FROM predictions")
-customers    = fetch_data("SELECT * FROM customer")
 
 # We only need these columns for the map
 locations = transactions[[
@@ -60,7 +58,7 @@ st.subheader("Insights on Purchase Behavior")
 
 st.write(
     """
-    This dashboard provides insights into fraud detection by analyzing transaction patterns, 
+    This app provides insights into fraud detection by analyzing transaction patterns, 
     including model performance (via a confusion matrix), average purchase trends, 
     and geographic distribution of transactions.
     """

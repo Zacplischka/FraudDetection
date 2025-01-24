@@ -101,3 +101,5 @@ if __name__ == "__main__":
         numeric_columns=numeric_columns,
         model_save_path="src/model_training/gb_model"
     )
+    print("Model training complete.")
+    spark.stop()
