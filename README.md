@@ -47,7 +47,8 @@ This pipeline processes new incoming data and applies the trained model to gener
 - **Python** – Main programming language for the pipeline.  
 
 ---
-
+## **Data Source**
+https://drive.google.com/drive/folders/1I-buQVbTWFQ80jwN_Xju0iZCzle2AnUD?usp=sharing
 ## **Installation & Setup**
  
 
@@ -68,6 +69,7 @@ docker-compose up
 ```
 
 ### **4. Execute the ETL and Model-Training Pipelines**
+Use a local terminal inside the project directory to run the following command:
 ```bash
 python main.py
 ```
