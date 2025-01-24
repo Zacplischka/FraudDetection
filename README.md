@@ -68,6 +68,7 @@ docker-compose up
 ```
 
 ### **4. Execute the ETL and Model-Training Pipelines**
+Open a terminal in the project root directory and run the following command:
 ```bash
 python main.py
 ```
